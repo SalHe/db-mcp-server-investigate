@@ -1,0 +1,114 @@
+{
+  "label": "pgpro-restricted",
+  "stderr": "Found localhost in DATABASE_URI: postgres://postgres:postgres@localhost:55432/testdb\nDocker on Linux detected: Using 172.17.0.1 for localhost\n  Remapping: postgres://postgres:postgres@localhost:55432/testdb --> postgres://postgres:postgres@172.17.0.1:55432/testdb\n----------------\nExecuting command:\npostgres-mcp --access-mode=restricted\n----------------\n[11/06/26 18:42:35] INFO     Starting PostgreSQL MCP Server in     server.py:555\n                             RESTRICTED mode                                    \n                    INFO     Successfully connected to database    server.py:568\n                             and initialized connection pool                    \n                    INFO     Processing request of type            server.py:534\n                             ListToolsRequest                                   \n",
+  "init": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {
+      "experimental": {},
+      "prompts": {
+        "listChanged": false
+      },
+      "resources": {
+        "subscribe": false,
+        "listChanged": false
+      },
+      "tools": {
+        "listChanged": false
+      }
+    },
+    "serverInfo": {
+      "name": "postgres-mcp",
+      "version": "1.6.0"
+    }
+  },
+  "tools": [
+    {
+      "name": "list_schemas",
+      "description": "List all schemas in the database",
+      "params": [],
+      "required": []
+    },
+    {
+      "name": "list_objects",
+      "description": "List objects in a schema",
+      "params": [
+        "schema_name",
+        "object_type"
+      ],
+      "required": [
+        "schema_name"
+      ]
+    },
+    {
+      "name": "get_object_details",
+      "description": "Show detailed information about a database object",
+      "params": [
+        "schema_name",
+        "object_name",
+        "object_type"
+      ],
+      "required": [
+        "schema_name",
+        "object_name"
+      ]
+    },
+    {
+      "name": "explain_query",
+      "description": "Explains the execution plan for a SQL query, showing how the database will execute it and provides detailed cost estimates.",
+      "params": [
+        "sql",
+        "analyze",
+        "hypothetical_indexes"
+      ],
+      "required": [
+        "sql"
+      ]
+    },
+    {
+      "name": "analyze_workload_indexes",
+      "description": "Analyze frequently executed queries in the database and recommend optimal indexes",
+      "params": [
+        "max_index_size_mb",
+        "method"
+      ],
+      "required": []
+    },
+    {
+      "name": "analyze_query_indexes",
+      "description": "Analyze a list of (up to 10) SQL queries and recommend optimal indexes",
+      "params": [
+        "queries",
+        "max_index_size_mb",
+        "method"
+      ],
+      "required": [
+        "queries"
+      ]
+    },
+    {
+      "name": "analyze_db_health",
+      "description": "Analyzes database health. Here are the available health checks: - index - checks for invalid, duplicate, and bloated indexes - connection - checks the number of connection and their utilization - vacuum - checks vacuum health for transaction id wraparound - sequence - checks sequences at risk of exc",
+      "params": [
+        "health_type"
+      ],
+      "required": []
+    },
+    {
+      "name": "get_top_queries",
+      "description": "Reports the slowest or most resource-intensive queries using data from the 'pg_stat_statements' extension.",
+      "params": [
+        "sort_by",
+        "limit"
+      ],
+      "required": []
+    },
+    {
+      "name": "execute_sql",
+      "description": "Execute a read-only SQL query",
+      "params": [
+        "sql"
+      ],
+      "required": []
+    }
+  ]
+}

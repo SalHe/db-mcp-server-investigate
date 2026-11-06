@@ -1,0 +1,383 @@
+{
+  "label": "mongodb-readonly",
+  "serverInfo": {
+    "name": "MongoDB MCP Server",
+    "version": "3.2.2"
+  },
+  "instructions": null,
+  "tools": [
+    {
+      "name": "aggregate-db",
+      "description": "Run an aggregation against a MongoDB database",
+      "params": [
+        "connectionId",
+        "database",
+        "pipeline",
+        "responseBytesLimit"
+      ],
+      "required": [
+        "connectionId",
+        "database",
+        "pipeline"
+      ],
+      "annotations": {
+        "title": "aggregate-db",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "aggregate",
+      "description": "Run an aggregation against a MongoDB collection",
+      "params": [
+        "connectionId",
+        "database",
+        "collection",
+        "pipeline",
+        "responseBytesLimit"
+      ],
+      "required": [
+        "connectionId",
+        "database",
+        "collection",
+        "pipeline"
+      ],
+      "annotations": {
+        "title": "aggregate",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "collection-indexes",
+      "description": "Describe the indexes for a collection",
+      "params": [
+        "connectionId",
+        "database",
+        "collection"
+      ],
+      "required": [
+        "connectionId",
+        "database",
+        "collection"
+      ],
+      "annotations": {
+        "title": "collection-indexes",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "collection-schema",
+      "description": "Describe the schema for a collection",
+      "params": [
+        "connectionId",
+        "database",
+        "collection",
+        "sampleSize",
+        "responseBytesLimit"
+      ],
+      "required": [
+        "connectionId",
+        "database",
+        "collection"
+      ],
+      "annotations": {
+        "title": "collection-schema",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "collection-storage-size",
+      "description": "Gets the size of the collection",
+      "params": [
+        "connectionId",
+        "database",
+        "collection"
+      ],
+      "required": [
+        "connectionId",
+        "database",
+        "collection"
+      ],
+      "annotations": {
+        "title": "collection-storage-size",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "connect",
+      "description": "Connect to a MongoDB instance and get back a connectionId to pass to the other MongoDB tools. Each call establishes a new, independent connection — multiple connections can be active at the same time.",
+      "params": [
+        "connectionString",
+        "connectionName"
+      ],
+      "required": [
+        "connectionString"
+      ],
+      "annotations": {
+        "title": "connect",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "count",
+      "description": "Gets the number of documents in a MongoDB collection using db.collection.count() and query as an optional filter parameter",
+      "params": [
+        "connectionId",
+        "database",
+        "collection",
+        "query"
+      ],
+      "required": [
+        "connectionId",
+        "database",
+        "collection"
+      ],
+      "annotations": {
+        "title": "count",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "db-stats",
+      "description": "Returns statistics that reflect the use state of a single database",
+      "params": [
+        "connectionId",
+        "database"
+      ],
+      "required": [
+        "connectionId",
+        "database"
+      ],
+      "annotations": {
+        "title": "db-stats",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "disconnect",
+      "description": "Close a MongoDB connection and revoke its connectionId.",
+      "params": [
+        "connectionId"
+      ],
+      "required": [
+        "connectionId"
+      ],
+      "annotations": {
+        "title": "disconnect",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "explain",
+      "description": "Returns statistics describing the execution of the winning plan chosen by the query optimizer for the evaluated method",
+      "params": [
+        "connectionId",
+        "database",
+        "collection",
+        "method",
+        "verbosity"
+      ],
+      "required": [
+        "connectionId",
+        "database",
+        "collection",
+        "method"
+      ],
+      "annotations": {
+        "title": "explain",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "export",
+      "description": "Export a query or aggregation results in the specified EJSON format.",
+      "params": [
+        "connectionId",
+        "database",
+        "collection",
+        "exportTitle",
+        "exportTarget",
+        "jsonExportFormat"
+      ],
+      "required": [
+        "connectionId",
+        "database",
+        "collection",
+        "exportTitle",
+        "exportTarget"
+      ],
+      "annotations": {
+        "title": "export",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "find",
+      "description": "Run a find query against a MongoDB collection",
+      "params": [
+        "connectionId",
+        "database",
+        "collection",
+        "filter",
+        "projection",
+        "limit",
+        "sort",
+        "responseBytesLimit"
+      ],
+      "required": [
+        "connectionId",
+        "database",
+        "collection"
+      ],
+      "annotations": {
+        "title": "find",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "list-collections",
+      "description": "List all collections for a given database",
+      "params": [
+        "connectionId",
+        "database"
+      ],
+      "required": [
+        "connectionId",
+        "database"
+      ],
+      "annotations": {
+        "title": "list-collections",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "list-connections",
+      "description": "List the active MongoDB connections and their connectionIds. Use this to find a connectionId established earlier.",
+      "params": [],
+      "required": [],
+      "annotations": {
+        "title": "list-connections",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "list-databases",
+      "description": "List all databases for a MongoDB connection",
+      "params": [
+        "connectionId"
+      ],
+      "required": [
+        "connectionId"
+      ],
+      "annotations": {
+        "title": "list-databases",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "mongodb-logs",
+      "description": "Returns the most recent logged mongod events",
+      "params": [
+        "connectionId",
+        "type",
+        "limit"
+      ],
+      "required": [
+        "connectionId"
+      ],
+      "annotations": {
+        "title": "mongodb-logs",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "atlas-local-list-deployments",
+      "description": "List MongoDB Atlas local deployments",
+      "params": [],
+      "required": [],
+      "annotations": {
+        "title": "atlas-local-list-deployments",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "atlas-local-connect-deployment",
+      "description": "Connect to a MongoDB Atlas Local deployment and get back a connectionId to pass to the other MongoDB tools",
+      "params": [
+        "deploymentName"
+      ],
+      "required": [
+        "deploymentName"
+      ],
+      "annotations": {
+        "title": "atlas-local-connect-deployment",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "search-knowledge",
+      "description": "Search for information in the MongoDB Assistant knowledge base. This includes official documentation, curated expert guidance, and other resources provided by MongoDB. Supports filtering by data source and version.",
+      "params": [
+        "query",
+        "limit",
+        "dataSources"
+      ],
+      "required": [
+        "query"
+      ],
+      "annotations": {
+        "title": "search-knowledge",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "list-knowledge-sources",
+      "description": "List available data sources in the MongoDB Assistant knowledge base. Use this to explore available data sources or to find search filter parameters to use in search-knowledge.",
+      "params": [],
+      "required": [],
+      "annotations": {
+        "title": "list-knowledge-sources",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    }
+  ]
+}

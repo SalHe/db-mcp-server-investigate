@@ -1,0 +1,19 @@
+{
+  "label": "official-pg",
+  "serverInfo": {
+    "name": "example-servers/postgres",
+    "version": "0.1.0"
+  },
+  "instructions": null,
+  "tools": [
+    {
+      "name": "query",
+      "description": "Run a read-only SQL query",
+      "params": [
+        "sql"
+      ],
+      "required": [],
+      "annotations": null
+    }
+  ]
+}

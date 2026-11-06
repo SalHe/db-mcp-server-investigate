@@ -1,0 +1,20 @@
+{
+  "name": "experiments",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@bytebase/dbhub": "^1.5.1",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@modelcontextprotocol/server-postgres": "^0.6.2",
+    "@supabase/mcp-server-supabase": "^0.16.1",
+    "mongodb-mcp-server": "^3.2.2"
+  }
+}

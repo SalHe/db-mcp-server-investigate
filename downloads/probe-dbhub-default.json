@@ -1,0 +1,49 @@
+{
+  "label": "dbhub-default",
+  "serverInfo": {
+    "name": "DBHub MCP Server",
+    "version": "1.5.1"
+  },
+  "instructions": null,
+  "tools": [
+    {
+      "name": "execute_sql",
+      "description": "Execute SQL queries on the postgres database",
+      "params": [
+        "sql"
+      ],
+      "required": [
+        "sql"
+      ],
+      "annotations": {
+        "title": "Execute SQL (postgres)",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "search_objects",
+      "description": "Search and list database objects on the postgres database",
+      "params": [
+        "object_type",
+        "pattern",
+        "schema",
+        "table",
+        "detail_level",
+        "limit"
+      ],
+      "required": [
+        "object_type"
+      ],
+      "annotations": {
+        "title": "Search Database Objects (postgres)",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

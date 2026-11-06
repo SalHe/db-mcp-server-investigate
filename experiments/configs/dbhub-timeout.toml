@@ -1,0 +1,10 @@
+[[sources]]
+id = "pg"
+dsn = "postgres://postgres:postgres@localhost:55432/testdb?sslmode=disable"
+query_timeout = 2
+
+[[tools]]
+name = "execute_sql"
+source = "pg"
+readonly = true
+max_rows = 5

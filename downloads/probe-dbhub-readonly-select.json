@@ -1,0 +1,46 @@
+{
+  "label": "dbhub-readonly",
+  "stderr": "Configuration source: dbhub-readonly.toml\nConnecting to 1 database source(s)...\n  - pg: postgres://postgres:********@localhost:55432/testdb?sslmode=disable\nTool registry initialized\nWatching configs/dbhub-readonly.toml for changes (hot reload enabled)\n\n _____  ____  _   _       _     \n|  __ \\|  _ \\| | | |     | |    \n| |  | | |_) | |_| |_   _| |__  \n| |  | |  _ <|  _  | | | | '_ \\ \n| |__| | |_) | | | | |_| | |_) |\n|_____/|____/|_| |_|\\__,_|_.__/ \n                                \nv1.5.1 - Minimal Database MCP Server\n\n┌──────────────────────────────────────────────────────────────┐\n│ pg (postgres)        │ localhost:55432/testdb   │            │\n├──────────────────────────────────────────────────────────────┤\n│   • 🔒 execute_sql                                           │\n└──────────────────────────────────────────────────────────────┘\nMCP server running on stdio\n",
+  "init": {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {
+      "tools": {
+        "listChanged": true
+      }
+    },
+    "serverInfo": {
+      "name": "DBHub MCP Server",
+      "version": "1.5.1"
+    }
+  },
+  "tools": [
+    {
+      "name": "execute_sql",
+      "description": "Execute SQL queries on the postgres database [READ-ONLY MODE] (limited to 5 rows; capped results carry \"truncated\": true)",
+      "params": [
+        "sql"
+      ],
+      "required": [
+        "sql"
+      ]
+    }
+  ],
+  "call": {
+    "tool": "execute_sql",
+    "args": {
+      "sql": "select * from users order by id"
+    },
+    "response": {
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"success\": true,\n  \"data\": {\n    \"statements\": [\n      {\n        \"sql\": \"select * from users order by id\",\n        \"rows\": [\n          {\n            \"id\": 1,\n            \"name\": \"user1\",\n            \"email\": \"u1@example.com\"\n          },\n          {\n            \"id\": 2,\n            \"name\": \"user2\",\n            \"email\": \"u2@example.com\"\n          },\n          {\n            \"id\": 3,\n            \"name\": \"user3\",\n            \"email\": \"u3@example.com\"\n          },\n          {\n            \"id\": 4,\n            \"name\": \"user4\",\n            \"email\": \"u4@example.com\"\n          },\n          {\n            \"id\": 5,\n            \"name\": \"user5\",\n            \"email\": \"u5@example.com\"\n          }\n        ],\n        \"count\": 5,\n        \"truncated\": true\n      }\n    ],\n    \"source_id\": \"pg\"\n  }\n}"
+          }
+        ]
+      },
+      "jsonrpc": "2.0",
+      "id": 3
+    }
+  }
+}

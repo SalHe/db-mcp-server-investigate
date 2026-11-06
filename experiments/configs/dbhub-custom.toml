@@ -1,0 +1,16 @@
+[[sources]]
+id = "pg"
+dsn = "postgres://postgres:postgres@localhost:55432/testdb?sslmode=disable"
+
+[[tools]]
+name = "find_user"
+description = "Find a user by numeric id"
+source = "pg"
+statement = "SELECT id, name, email FROM users WHERE id = $1"
+max_rows = 1
+
+[[tools.parameters]]
+name = "id"
+type = "integer"
+description = "user id"
+required = true

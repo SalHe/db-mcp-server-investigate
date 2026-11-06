@@ -1,0 +1,9 @@
+[[sources]]
+id = "pg"
+dsn = "postgres://postgres:postgres@localhost:55432/testdb?sslmode=disable"
+
+[[tools]]
+name = "execute_sql"
+source = "pg"
+readonly = true
+max_rows = 5
