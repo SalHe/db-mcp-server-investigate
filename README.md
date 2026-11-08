@@ -13,6 +13,7 @@
 5. **权限在四个平面收敛：** 客户端 allow/ask/deny → MCP 传输层 OAuth 2.1/audience → 服务器 scope/feature/access-mode → 数据库角色/RLS。任何一层都不能单独承担安全责任。
 6. **Agent 侧确认只是交互层护栏。** 一旦工具被 allow，提示注入就可以驱动它；高风险操作应默认不注册、或强制 `requiresUserInteraction`。
 7. **对内核 Server 的建议：** 先做只读 + 诊断，用语义化工具（plan/stats/locks/index advisor）而不是万能 `execute_sql`；写/DDL/运维拆成独立工具集与独立凭据；资源上限与审计前置。
+8. **数据库感知不到 MCP Client。** `clientInfo` 是自报且未认证的字段，不会进入数据库；DB 只认连接主体。要按 agent/用户控权，必须由 Server 把 OAuth `sub` 映射成 DB 角色或会话上下文——Neon 的 `?roleName=`、Snowflake 的 `session:role:<role>`、DAB 的 RBAC 是少数真正做到的例子。
 
 ## 仓库结构
 

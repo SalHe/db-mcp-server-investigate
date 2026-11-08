@@ -1,0 +1,61 @@
+{
+  "label": "./node_modules/.bin/dbhub",
+  "stderr": "Configuration source: command line argument\nConnecting to 1 database source(s)...\n  - default: postgres://agent_reader:******@localhost:55432/testdb?sslmode=disable\nTool registry initialized\n\n _____  ____  _   _       _     \n|  __ \\|  _ \\| | | |     | |    \n| |  | | |_) | |_| |_   _| |__  \n| |  | |  _ <|  _  | | | | '_ \\ \n| |__| | |_) | | | | |_| | |_) |\n|_____/|____/|_| |_|\\__,_|_.__/ \n                                \nv1.5.1 - Minimal Database MCP Server\n\n┌──────────────────────────────────────────────────────────────┐\n│ default (postgres)   │ localhost:55432/testdb   │            │\n├──────────────────────────────────────────────────────────────┤\n│   • execute_sql                                              │\n│   • 🔒 search_objects                                        │\n└──────────────────────────────────────────────────────────────┘\nMCP server running on stdio\n",
+  "init": {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {
+      "tools": {
+        "listChanged": true
+      }
+    },
+    "serverInfo": {
+      "name": "DBHub MCP Server",
+      "version": "1.5.1"
+    }
+  },
+  "tools": [
+    {
+      "name": "execute_sql",
+      "description": "Execute SQL queries on the postgres database",
+      "params": [
+        "sql"
+      ],
+      "required": [
+        "sql"
+      ]
+    },
+    {
+      "name": "search_objects",
+      "description": "Search and list database objects on the postgres database",
+      "params": [
+        "object_type",
+        "pattern",
+        "schema",
+        "table",
+        "detail_level",
+        "limit"
+      ],
+      "required": [
+        "object_type"
+      ]
+    }
+  ],
+  "call": {
+    "tool": "execute_sql",
+    "args": {
+      "sql": "select current_user, session_user, current_setting('application_name', true) as app_name, coalesce(inet_client_addr()::text,'local') as client_addr"
+    },
+    "response": {
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"success\": true,\n  \"data\": {\n    \"statements\": [\n      {\n        \"sql\": \"select current_user, session_user, current_setting('application_name', true) as app_name, coalesce(inet_client_addr()::text,'local') as client_addr\",\n        \"rows\": [\n          {\n            \"current_user\": \"agent_reader\",\n            \"session_user\": \"agent_reader\",\n            \"app_name\": \"\",\n            \"client_addr\": \"172.17.0.1/32\"\n          }\n        ],\n        \"count\": 1\n      }\n    ],\n    \"source_id\": \"default\"\n  }\n}"
+          }
+        ]
+      },
+      "jsonrpc": "2.0",
+      "id": 3
+    }
+  }
+}

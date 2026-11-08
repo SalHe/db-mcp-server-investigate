@@ -49,7 +49,7 @@ try {
   const init = await send("initialize", {
     protocolVersion: "2025-06-18",
     capabilities: {},
-    clientInfo: { name: "raw-probe", version: "1.0.0" },
+    clientInfo: { name: process.env.CLIENT_NAME || "raw-probe", version: "1.0.0" },
   });
   out.init = init.result;
   notify("notifications/initialized", {});

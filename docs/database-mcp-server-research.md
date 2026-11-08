@@ -417,6 +417,49 @@ MongoDB 官方专门提示：`connectionScope` 默认 `session`，但计划改�
 
 **正确做法**：认证 token 绑定租户/项目；服务器按 token 选择 source 与 DB 角色；不要把"选择连接"的权力交给模型。
 
+### 5.6 数据库能感知 Agent 的角色吗
+
+**结论：数据库看不到 MCP Client。** 它只看到连接时使用的主体（DB 用户/角色）和会话设置。MCP 的 `clientInfo`（name/version）是客户端**自报、未认证**的字段，不会传播到数据库；2026-07-28 无状态化后连协议级 session 也没有。要让数据库"按 Agent 区分权限"，必须由 MCP Server 把身份**翻译**成数据库主体或会话上下文。
+
+先把四层身份分开：
+
+| 层 | 典型信号 | 可信度 | 数据库可见 |
+|---|---|---|---|
+| MCP Client 软件 | `clientInfo.name/version` | 自报，任何人可填任意值 | 否 |
+| OAuth 客户端 | `client_id` / CIMD | 经授权服务器认证，但只标识"哪个客户端软件"，不标识用户角色 | 否（Server 可见） |
+| 终端用户/租户 | OAuth `sub`、IdP claims | 取决于 IdP 与 token 校验，通常可信 | 否，除非显式映射 |
+| 数据库主体 | 连接用户/角色、`SET ROLE`、会话 GUC | **数据库强制** | 是 |
+
+**实测（E9）**：同一个 DBHub、同一个 DB 角色 `agent_reader`，只改 `clientInfo.name`（`claude-code` vs `evil-client`），数据库侧 `current_user`、`session_user`、`application_name`、`client_addr` 完全一致，`application_name` 为空，没有任何 clientInfo 痕迹；把 DSN 换成 `agent_writer` 后同一 INSERT 才成功。**数据库认的只有连接主体。**
+
+调研中真正把身份传到数据库的产品：
+
+| Server | 是否传到 DB | 机制 | 边界/限制 |
+|---|---|---|---|
+| **Neon** | 是（可选） | `?roleName=` 固定 Postgres 登录角色；OAuth 授权页把角色作为固定 grant；工具参数 `role_name` 必须与 pin 一致 | 管理 API 工具仍按 OAuth token 自身权限执行，不受该 DB 角色限制 |
+| **Snowflake 托管 MCP** | 是 | 每用户 OAuth 登录映射到 Snowflake 用户；`session:role:<role>` scope 选主角色 | 部分客户端（如 Claude）不支持 role scope，会退回用户 `DEFAULT_ROLE` |
+| **ClickHouse MCP** | 是 | 连接使用 ClickHouse 用户；Server 读取并尊重用户/服务端的 `readonly` 设置 | 无 per-request 切换；靠部署多个用户 |
+| **Databricks 托管 MCP** | 是 | SQL MCP 以调用者的 Unity Catalog + warehouse 权限执行 | 具体 token 交换/on-behalf-of 机制未公开 |
+| **YugabyteDB MCP** | 是（可选） | 文档提到 OIDC / per-user `SET ROLE` | `[文档]`，未实测 |
+| **Microsoft SQL MCP (DAB)** | 部分是 | Entra JWT role / stdio `role:<name>` 驱动 DAB 的实体/字段/行 RBAC | 这是 **DAB 角色**，API 层生效；数据库连接通常仍是单一主体 |
+| **Supabase MCP** | 否 | PAT/OAuth + `read_only` + `project_ref` 控制工具面与项目 | `clientInfo` 只用于 User-Agent 和反馈；`execute_sql` 用项目 DB 的固定角色 |
+| **MongoDB MCP** | 否 | 官方明说 "The server does not distinguish callers" | `mcp-session-id` 由客户端声明，不是安全边界 |
+| **server-postgres / DBHub / Postgres MCP Pro** | 否 | 单一 DSN / 服务账号 | 所有调用者共享同一 DB 身份；审计只能到 server |
+| **Oracle SQLcl MCP** | 是（按连接） | `list-connections` / `connect` 切换 named connection，每个连接可以是不同 DB 用户 | `connect` 让模型在运行时切库/切身份，属于高风险能力 |
+
+**能按 Agent 控权的三种落地方式**：
+
+1. **每 Agent/租户一个 DB 角色 + 凭据**（Neon `roleName`、每用户 DSN）：隔离最硬，DB 审计天然到角色；代价是角色/凭据数量与轮换成本。
+2. **共享账号 + 每请求 `SET ROLE` / `SET LOCAL` + RLS**：Server 从 token 解析 `sub`，在事务内切换到对应角色或写入 `app.user_id`，RLS 用 `current_setting()` 判定。要注意连接池串扰、`SET ROLE` 不能提权、以及必须用 `SET LOCAL`/事务级设置。
+3. **平台层 RBAC**（DAB、Supabase scope、Snowflake role scope）：在 API/网关层裁剪工具与实体；数据库角色作为兜底。
+
+**四个坑**：
+
+- 不要用 `clientInfo` 做授权：它没有认证，客户端可以自称任何名字；规范也不保证 `tools/list` 按连接变化。
+- 不要把 `Mcp-Session-Id` / 自定义 handle 当身份：客户端可声明，且 2026-07-28 已移除协议级 session。
+- `SET ROLE` 只能切到当前登录角色已被授予的角色，不能提权；共享连接池里必须用事务级设置并及时重置。
+- 审计到"人"只能在 MCP Server 侧完成：数据库日志最多到 `db_role`；要关联 `sub`/租户，需要 Server 记录并回传 request id。
+
 ---
 
 ## 6. 横向对比
@@ -605,6 +648,24 @@ required = true
 ### E8. 工具注解只是 hint
 
 `server-postgres` 的 `query` 没有 annotations；DBHub 的 `execute_sql` 标记 `readOnlyHint:false, destructiveHint:true`；MongoDB 的读工具标记 `readOnlyHint:true`。客户端可以用这些注解做 UI 提示或自动批准，但**规范不保证服务器诚实**，也不能阻止服务器在"只读"工具里执行写操作。`[文档/源码]`
+
+### E9. 数据库看不到 MCP Client
+
+环境：DBHub + PostgreSQL，创建两个登录角色 `agent_reader`（仅 SELECT）与 `agent_writer`（SELECT/INSERT）。
+
+```sql
+select current_user, session_user,
+       current_setting('application_name', true) as app_name,
+       coalesce(inet_client_addr()::text,'local') as client_addr;
+```
+
+| clientInfo.name | DSN 角色 | current_user | app_name | INSERT |
+|---|---|---|---|---|
+| `claude-code` | `agent_reader` | `agent_reader` | `""`（空） | `permission denied for table users` |
+| `evil-client` | `agent_reader` | `agent_reader` | `""`（空） | `permission denied for table users` |
+| `evil-client` | `agent_writer` | `agent_writer` | `""`（空） | 成功，`id=6` |
+
+两次不同 `clientInfo` 的完整输出逐字节相同（`downloads/probe-identity-claude-code.json` vs `probe-identity-evil-client.json`）。`application_name` 为空，说明 DBHub 没有把客户端信息写入会话；即使写了，它也是 Server 自报的、可伪造的字段。**数据库唯一可靠的身份是连接主体；按 Agent 控权必须由 Server 把身份映射成 DB 角色/会话上下文。** `[实验]`
 
 ---
 
